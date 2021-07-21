@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.droidhubworld.crashlogger">
+
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <application android:supportsRtl="true">
+        <provider
+            android:name="com.droidhubworld.crashlogger.CrashLoggerInitProvider"
+            android:authorities="${applicationId}.CrashReporterInitProvider"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name="com.droidhubworld.crashlogger.activity.LogMessageActivity"
+            android:parentActivityName="com.droidhubworld.crashlogger.activity.CrashLoggerActivity"
+            android:theme="@style/CrashLogger.Theme"></activity>
+        <activity
+            android:name="com.droidhubworld.crashlogger.activity.CrashLoggerActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.droidhubworld.android.task"
+            android:theme="@style/CrashLogger.Theme" />
+    </application>
+
+</manifest>
