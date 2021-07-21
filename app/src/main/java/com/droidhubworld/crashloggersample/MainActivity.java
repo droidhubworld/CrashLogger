@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).start();*/
-
         mContext = this;
         findViewById(R.id.crashLogActivity).setOnClickListener(new View.OnClickListener() {
             @Override
