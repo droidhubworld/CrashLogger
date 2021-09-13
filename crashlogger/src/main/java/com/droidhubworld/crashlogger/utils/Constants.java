@@ -2,6 +2,7 @@ package com.droidhubworld.crashlogger.utils;
 
 public class Constants {
     public static final String EXCEPTION_DATE_SUFFIX = "exception_date";
+    public static final String TAG_SUFFIX = "tag";
     public static final String DATE_SUFFIX = "date";
     public static final String EXCEPTION_SUFFIX = "_exception";
     public static final String DATA_SUFFIX = "data";

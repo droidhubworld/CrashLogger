@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.exceptions).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CLICK >", "ANAND 11111");
                 try {
                     context = null;
                     context.getResources();
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
-                CrashLogReporter.logReadAndWriteException(null, path, "Text_Write", "Test Is Text Message for save");
+                CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", "Test Is Text Message for save");
             }
         });
 

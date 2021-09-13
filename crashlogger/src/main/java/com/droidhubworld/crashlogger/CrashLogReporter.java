@@ -112,8 +112,14 @@ public class CrashLogReporter {
             CrashLogUtil.takeScreenshot(view);
     }
 
-    public static void logReadAndWriteException(View view, String folderPath, String fileName, String text) {
-        CrashLogUtil.readAndWrite(text, folderPath, fileName);
+    public static void logReadAndWriteException(View view, String TAG, Exception exception) {
+        CrashLogUtil.readAndWrite(TAG, exception);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
+
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, String text) {
+        CrashLogUtil.readAndWrite(text, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }

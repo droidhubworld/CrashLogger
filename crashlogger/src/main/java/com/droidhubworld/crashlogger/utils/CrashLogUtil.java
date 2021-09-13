@@ -35,7 +35,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.droidhubworld.crashlogger.utils.Constants.CHANNEL_NOTIFICATION_ID;
 
 public class CrashLogUtil {
-    private static final String TAG = CrashLogUtil.class.getSimpleName();
+    private static final String tag = CrashLogUtil.class.getSimpleName();
 
     private CrashLogUtil() {
         //this class is not publicly instantiable
@@ -50,7 +50,7 @@ public class CrashLogUtil {
 
         String crashReportPath = CrashLogReporter.getCrashReportPath();
         String filename = getCrashLogTime() + Constants.CRASH_SUFFIX + Constants.FILE_EXTENSION;
-        writeToFile(crashReportPath, filename, getStackTrace(null, throwable), true);
+        writeToFile(crashReportPath, filename, getStackTrace(null, null, throwable), true);
 
         showNotification(throwable.getLocalizedMessage(), true);
     }
@@ -67,7 +67,7 @@ public class CrashLogUtil {
             File crashDir = new File(screenShortPath);
             if (!crashDir.exists() || !crashDir.isDirectory()) {
                 screenShortPath = getDefaultScreenShortPath();
-                Logger.e(TAG, "Path provided doesn't exists : " + crashDir + "\nSaving crash report at : " + getDefaultPath());
+                Logger.e(tag, "Path provided doesn't exists : " + crashDir + "\nSaving crash report at : " + getDefaultPath());
             }
             String mPath = screenShortPath + File.separator + mFileName;
             // create bitmap screen capture
@@ -83,7 +83,7 @@ public class CrashLogUtil {
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
             outputStream.flush();
             outputStream.close();
-            Logger.e(TAG, "SCREEN SHORT PATH : " + imageFile);
+            Logger.e(tag, "SCREEN SHORT PATH : " + imageFile);
         } catch (Throwable e) {
             // Several error may come out with file handling or DOM
             e.printStackTrace();
@@ -98,7 +98,7 @@ public class CrashLogUtil {
 
                 String crashReportPath = CrashLogReporter.getCrashReportPath();
                 final String filename = getCrashLogTime() + Constants.EXCEPTION_SUFFIX + Constants.FILE_EXTENSION;
-                writeToFile(crashReportPath, filename, getStackTrace(null, exception), true);
+                writeToFile(crashReportPath, filename, getStackTrace(null, null, exception), true);
 
                 showNotification(exception.getLocalizedMessage(), false);
             }
@@ -114,13 +114,13 @@ public class CrashLogUtil {
             String dirPath = crashReportPath + File.separator + filename;
             File file = new File(dirPath);
             if (!file.exists()) {
-                writeToFile(crashReportPath, filename, getStackTrace(null, exception), true);
+                writeToFile(crashReportPath, filename, getStackTrace(null, null, exception), true);
             } else {
                 String crashLog = FileUtils.readFromFile(file);
                 try {
                     JSONObject data = new JSONObject(crashLog);
                     JSONArray oldData = data.optJSONArray(Constants.EXCEPTION_SUFFIX);
-                    writeToFile(crashReportPath, filename, getStackTrace(oldData, exception), true);
+                    writeToFile(crashReportPath, filename, getStackTrace(oldData, null, exception), true);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -132,7 +132,34 @@ public class CrashLogUtil {
         }).start();
     }
 
-    public static void readAndWrite(String text, String crashReportPath, String fileName) {
+    public static void readAndWrite(String tag, Exception exception) {
+
+        new Thread(() -> {
+            String crashReportPath = CrashLogReporter.getCrashReportPath();
+            String filename = CrashLogReporter.getCrashReportFileName() + Constants.EXCEPTION_SUFFIX + Constants.FILE_EXTENSION;
+
+            String dirPath = crashReportPath + File.separator + filename;
+            File file = new File(dirPath);
+            if (!file.exists()) {
+                writeToFile(crashReportPath, filename, getStackTrace(null, tag, exception), true);
+            } else {
+                String crashLog = FileUtils.readFromFile(file);
+                try {
+                    JSONObject data = new JSONObject(crashLog);
+                    JSONArray oldData = data.optJSONArray(Constants.EXCEPTION_SUFFIX);
+                    writeToFile(crashReportPath, filename, getStackTrace(oldData, tag, exception), true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            showNotification(exception.getLocalizedMessage(), false);
+        }).start();
+    }
+
+    public static void readAndWrite(String text, String tag, String crashReportPath, String fileName) {
 
         new Thread(new Runnable() {
             @Override
@@ -142,13 +169,13 @@ public class CrashLogUtil {
                 String dirPath = crashReportPath + File.separator + _fileName;
                 File file = new File(dirPath);
                 if (!file.exists()) {
-                    writeToFile(crashReportPath, _fileName, getStackTrace(null, text), false);
+                    writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, text), false);
                 } else {
                     String crashLog = FileUtils.readFromFile(file);
                     try {
                         JSONObject data = new JSONObject(crashLog);
                         JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
-                        writeToFile(crashReportPath, _fileName, getStackTrace(oldData, text), false);
+                        writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, text), false);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -174,7 +201,7 @@ public class CrashLogUtil {
             } else {
                 crashReportPath = getDefaultPath();
             }
-            Logger.e(TAG, "Path provided doesn't exists : " + crashDir + "\nSaving crash report at : " + getDefaultPath());
+            Logger.e(tag, "Path provided doesn't exists : " + crashDir + "\nSaving crash report at : " + getDefaultPath());
         }
 
         BufferedWriter bufferedWriter;
@@ -192,7 +219,7 @@ public class CrashLogUtil {
             bufferedWriter.write(object.toString());
             bufferedWriter.flush();
             bufferedWriter.close();
-            Logger.d(TAG, "crash report saved in : " + crashReportPath);
+            Logger.d(tag, "crash report saved in : " + crashReportPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -240,7 +267,7 @@ public class CrashLogUtil {
         }
     }
 
-    private static JSONArray getStackTrace(JSONArray oldData, Throwable e) {
+    private static JSONArray getStackTrace(JSONArray oldData, String tag, Throwable e) {
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         try {
@@ -255,6 +282,8 @@ public class CrashLogUtil {
 
             JSONObject object1 = new JSONObject();
             object1.put(Constants.EXCEPTION_DATE_SUFFIX, getCrashLogTime());
+            if (tag != null)
+                object1.put(Constants.TAG_SUFFIX, tag);
 
 
 
@@ -275,7 +304,7 @@ public class CrashLogUtil {
         }
     }
 
-    private static JSONArray getStackTrace(JSONArray oldData, String text) {
+    private static JSONArray getStackTrace(JSONArray oldData, String tag, String text) {
 
         try {
             JSONArray jsonArray = oldData;
@@ -286,7 +315,8 @@ public class CrashLogUtil {
 
             JSONObject object1 = new JSONObject();
             object1.put(Constants.DATE_SUFFIX, getCrashLogTime());
-
+            if (tag != null)
+                object1.put(Constants.TAG_SUFFIX, tag);
             object1.put(Constants.DATA_SUFFIX, text);
 
             jsonArray.put(object1);
