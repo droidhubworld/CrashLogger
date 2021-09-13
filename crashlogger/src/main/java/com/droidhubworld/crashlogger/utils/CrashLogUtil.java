@@ -194,13 +194,13 @@ public class CrashLogUtil {
             String dirPath = crashReportPath + File.separator + _fileName;
             File file = new File(dirPath);
             if (!file.exists()) {
-                writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, exception), true);
+                writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, exception), false);
             } else {
                 String crashLog = FileUtils.readFromFile(file);
                 try {
                     JSONObject data = new JSONObject(crashLog);
                     JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
-                    writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, exception), true);
+                    writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, exception), false);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
