@@ -6,6 +6,7 @@ public class Constants {
     public static final String DATE_SUFFIX = "date";
     public static final String EXCEPTION_SUFFIX = "_exception";
     public static final String DATA_SUFFIX = "data";
+    public static final String DATA_OBJECT_SUFFIX = "dataObject";
     public static final String DEVISE_INFO = "deviceInformation";
     public static final String CRASH_SUFFIX = "_crash";
     public static final String SCREEN_SHORT_SUFFIX = "_screenShort";

@@ -94,7 +94,15 @@ public class MainActivity extends AppCompatActivity {
                     CrashLogReporter.logReadAndWriteException(getWindow().getDecorView().getRootView(), e);
                     String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
-                    CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", "Test Is Text Message for save",e);
+                    JSONObject object = new JSONObject();
+                    try {
+                        object.put("request","request 1");
+                        object.put("response","response 1");
+                    } catch (JSONException _e) {
+                        _e.printStackTrace();
+                    }
+
+                    CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", object,e);
                 }
             }
         });
@@ -111,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", object);
+                CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", object.toString());
             }
         });
 
