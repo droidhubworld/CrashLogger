@@ -38,7 +38,9 @@ public class BaseApp extends Application {
         }
     }
 }
-
+```
+###### Check Creah on click
+```
 findViewById(R.id.exceptions).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,9 +63,7 @@ findViewById(R.id.writeText).setOnClickListener(new View.OnClickListener() {
         });
 
 ```
-###### For more exception type please check MainActivity.java class
-```
+#### For more exception type please check MainActivity.java class
 
-```
-###### Thanks
-```
+## Thanks
+
