@@ -131,6 +131,7 @@ public class CrashLogUtil {
             showNotification(exception.getLocalizedMessage(), false);
         }).start();
     }
+
     public static void readAndWrite(Throwable exception) {
 
         new Thread(() -> {
@@ -174,6 +175,32 @@ public class CrashLogUtil {
                     JSONObject data = new JSONObject(crashLog);
                     JSONArray oldData = data.optJSONArray(Constants.EXCEPTION_SUFFIX);
                     writeToFile(crashReportPath, filename, getStackTrace(oldData, tag, exception), true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            showNotification(exception.getLocalizedMessage(), false);
+        }).start();
+    }
+
+    public static void readAndWrite(Throwable exception, String tag, String crashReportPath, String fileName) {
+
+        new Thread(() -> {
+            String _fileName = fileName + "_" + Constants.DATA_SUFFIX + Constants.FILE_EXTENSION;
+
+            String dirPath = crashReportPath + File.separator + _fileName;
+            File file = new File(dirPath);
+            if (!file.exists()) {
+                writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, exception), true);
+            } else {
+                String crashLog = FileUtils.readFromFile(file);
+                try {
+                    JSONObject data = new JSONObject(crashLog);
+                    JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
+                    writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, exception), true);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

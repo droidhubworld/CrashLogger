@@ -133,6 +133,11 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, Throwable t) {
+        CrashLogUtil.readAndWrite(t, TAG, folderPath, fileName);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
 
     public static Intent getLaunchIntent() {
         return new Intent(applicationContext, CrashLoggerActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

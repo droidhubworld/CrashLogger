@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Throwable e) {
                     //log caught Exception
                     CrashLogReporter.logReadAndWriteException(getWindow().getDecorView().getRootView(), e);
+                    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
+
+                    CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", e);
                 }
             }
         });
