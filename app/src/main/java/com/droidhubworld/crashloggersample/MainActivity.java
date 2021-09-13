@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     context = null;
                     context.getResources();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     //log caught Exception
                     CrashLogReporter.logReadAndWriteException(getWindow().getDecorView().getRootView(), e);
                 }

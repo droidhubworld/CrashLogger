@@ -111,6 +111,11 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+    public static void logReadAndWriteException(View view, Throwable exception) {
+        CrashLogUtil.readAndWrite(exception);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
 
     public static void logReadAndWriteException(View view, String TAG, Exception exception) {
         CrashLogUtil.readAndWrite(TAG, exception);

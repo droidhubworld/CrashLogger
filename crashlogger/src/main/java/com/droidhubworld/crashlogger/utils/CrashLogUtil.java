@@ -131,6 +131,32 @@ public class CrashLogUtil {
             showNotification(exception.getLocalizedMessage(), false);
         }).start();
     }
+    public static void readAndWrite(Throwable exception) {
+
+        new Thread(() -> {
+            String crashReportPath = CrashLogReporter.getCrashReportPath();
+            String filename = CrashLogReporter.getCrashReportFileName() + Constants.EXCEPTION_SUFFIX + Constants.FILE_EXTENSION;
+
+            String dirPath = crashReportPath + File.separator + filename;
+            File file = new File(dirPath);
+            if (!file.exists()) {
+                writeToFile(crashReportPath, filename, getStackTrace(null, null, exception), true);
+            } else {
+                String crashLog = FileUtils.readFromFile(file);
+                try {
+                    JSONObject data = new JSONObject(crashLog);
+                    JSONArray oldData = data.optJSONArray(Constants.EXCEPTION_SUFFIX);
+                    writeToFile(crashReportPath, filename, getStackTrace(oldData, null, exception), true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            showNotification(exception.getLocalizedMessage(), false);
+        }).start();
+    }
 
     public static void readAndWrite(String tag, Exception exception) {
 
