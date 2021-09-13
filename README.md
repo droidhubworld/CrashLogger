@@ -14,7 +14,7 @@ allprojects {
  ###### Step 2. Add the dependency
  ```
 dependencies {
-        implementation 'com.github.droidhubworld:custom_dialog:2.0.0'
+         implementation 'com.github.droidhubworld:CrashLogger:v0.0.2'
 }
 
 ```
