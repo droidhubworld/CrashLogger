@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.droidhubworld.crashlogger.CrashLogReporter;
 import com.droidhubworld.crashlogger.activity.CrashLoggerActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     CrashLogReporter.logReadAndWriteException(getWindow().getDecorView().getRootView(), e);
                     String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
-                    CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", e);
+                    CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", "Test Is Text Message for save",e);
                 }
             }
         });
@@ -100,7 +103,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
-                CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", "Test Is Text Message for save");
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("request","request 1");
+                    object.put("response","response 1");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                CrashLogReporter.logReadAndWriteException(null, "check", path, "Text_Write", object);
             }
         });
 

@@ -9,6 +9,8 @@ import com.droidhubworld.crashlogger.utils.CrashLogExceptionHandler;
 import com.droidhubworld.crashlogger.utils.CrashLogNotInitializedException;
 import com.droidhubworld.crashlogger.utils.CrashLogUtil;
 
+import org.json.JSONObject;
+
 public class CrashLogReporter {
     private static Context applicationContext;
 
@@ -133,8 +135,18 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, JSONObject jsonObject) {
+        CrashLogUtil.readAndWrite(jsonObject, TAG, folderPath, fileName);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
     public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, Throwable t) {
         CrashLogUtil.readAndWrite(t, TAG, folderPath, fileName);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName,String text, Throwable t) {
+        CrashLogUtil.readAndWrite(t,text, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }

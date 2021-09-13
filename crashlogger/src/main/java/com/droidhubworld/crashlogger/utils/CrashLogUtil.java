@@ -212,6 +212,32 @@ public class CrashLogUtil {
         }).start();
     }
 
+    public static void readAndWrite(Throwable exception, String text, String tag, String crashReportPath, String fileName) {
+
+        new Thread(() -> {
+            String _fileName = fileName + "_" + Constants.DATA_SUFFIX + Constants.FILE_EXTENSION;
+
+            String dirPath = crashReportPath + File.separator + _fileName;
+            File file = new File(dirPath);
+            if (!file.exists()) {
+                writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, text, exception), false);
+            } else {
+                String crashLog = FileUtils.readFromFile(file);
+                try {
+                    JSONObject data = new JSONObject(crashLog);
+                    JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
+                    writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, text, exception), false);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            showNotification(exception.getLocalizedMessage(), false);
+        }).start();
+    }
+
     public static void readAndWrite(String text, String tag, String crashReportPath, String fileName) {
 
         new Thread(new Runnable() {
@@ -237,6 +263,35 @@ public class CrashLogUtil {
 
 
                 showNotification(text, false);
+            }
+        }).start();
+    }
+
+    public static void readAndWrite(JSONObject jsonObject, String tag, String crashReportPath, String fileName) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String _fileName = fileName + "_" + Constants.DATA_SUFFIX + Constants.FILE_EXTENSION;
+
+                String dirPath = crashReportPath + File.separator + _fileName;
+                File file = new File(dirPath);
+                if (!file.exists()) {
+                    writeToFile(crashReportPath, _fileName, getStackTrace(null, tag, jsonObject), false);
+                } else {
+                    String crashLog = FileUtils.readFromFile(file);
+                    try {
+                        JSONObject data = new JSONObject(crashLog);
+                        JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
+                        writeToFile(crashReportPath, _fileName, getStackTrace(oldData, tag, jsonObject), false);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                showNotification(jsonObject.toString(), false);
             }
         }).start();
     }
@@ -320,6 +375,44 @@ public class CrashLogUtil {
         }
     }
 
+    private static JSONArray getStackTrace(JSONArray oldData, String tag, String text, Throwable e) {
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        try {
+
+            e.printStackTrace(printWriter);
+
+            JSONArray jsonArray = oldData;
+
+            if (jsonArray == null) {
+                jsonArray = new JSONArray();
+            }
+
+            JSONObject object1 = new JSONObject();
+            object1.put(Constants.EXCEPTION_DATE_SUFFIX, getCrashLogTime());
+            if (tag != null)
+                object1.put(Constants.TAG_SUFFIX, tag);
+
+
+
+            /*if (oldData != null) {
+                jsonArray.put(oldData);
+            }*/
+//        crashLog = result.toString();
+
+            object1.put(Constants.DATA_SUFFIX, text);
+            object1.put(Constants.EXCEPTION_SUFFIX, result.toString());
+
+            jsonArray.put(object1);
+
+            printWriter.close();
+            return jsonArray;
+        } catch (Exception _e) {
+            _e.printStackTrace();
+            return oldData;
+        }
+    }
+
     private static JSONArray getStackTrace(JSONArray oldData, String tag, Throwable e) {
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
@@ -371,6 +464,31 @@ public class CrashLogUtil {
             if (tag != null)
                 object1.put(Constants.TAG_SUFFIX, tag);
             object1.put(Constants.DATA_SUFFIX, text);
+
+            jsonArray.put(object1);
+
+            return jsonArray;
+        } catch (Exception _e) {
+            _e.printStackTrace();
+            return oldData;
+        }
+    }
+
+    private static JSONArray getStackTrace(JSONArray oldData, String tag, JSONObject jsonObject) {
+
+        try {
+            JSONArray jsonArray = oldData;
+
+            if (jsonArray == null) {
+                jsonArray = new JSONArray();
+            }
+
+            JSONObject object1 = new JSONObject();
+            object1.put(Constants.DATE_SUFFIX, getCrashLogTime());
+            if (tag != null)
+                object1.put(Constants.TAG_SUFFIX, tag);
+
+            object1.put(Constants.DATA_SUFFIX, jsonObject);
 
             jsonArray.put(object1);
 
