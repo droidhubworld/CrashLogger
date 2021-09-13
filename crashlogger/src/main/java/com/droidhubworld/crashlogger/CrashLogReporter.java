@@ -13,6 +13,7 @@ public class CrashLogReporter {
     private static Context applicationContext;
 
     private static String crashReportPath;
+    private static String crashReportFileName;
 
     private static boolean isNotificationEnabled = true;
 
@@ -26,11 +27,44 @@ public class CrashLogReporter {
         setUpExceptionHandler();
     }
 
-    public static void initialize(Context context, String crashReportSavePath) {
+    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName) {
         applicationContext = context;
         crashReportPath = crashReportSavePath;
+        crashReportFileName = crashReportSaveFileName;
         setUpExceptionHandler();
     }
+
+    public static class Builder {
+        Context applicationContext;
+        String crashReportPath;
+        String crashReportFileName;
+        boolean isNotificationEnabled;
+
+        public Builder(Context mContext) {
+            applicationContext = mContext;
+        }
+
+        public Builder crashReportPath(String crashReportPath) {
+            this.crashReportPath = crashReportPath;
+            return this;
+        }
+
+        public Builder crashReportFileName(String crashReportFileName) {
+            this.crashReportFileName = crashReportFileName;
+            return this;
+        }
+
+        public Builder isNotificationEnabled(Boolean isNotificationEnabled) {
+            this.isNotificationEnabled = isNotificationEnabled;
+            return this;
+        }
+
+
+        public CrashLogReporter build() {
+            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName);
+        }
+    }
+
 
     private static void setUpExceptionHandler() {
         if (!(Thread.getDefaultUncaughtExceptionHandler() instanceof CrashLogExceptionHandler)) {
@@ -53,6 +87,10 @@ public class CrashLogReporter {
         return crashReportPath;
     }
 
+    public static String getCrashReportFileName() {
+        return crashReportFileName;
+    }
+
     public static boolean isNotificationEnabled() {
         return isNotificationEnabled;
     }
@@ -64,7 +102,20 @@ public class CrashLogReporter {
 
     public static void logException(View view, Exception exception) {
         CrashLogUtil.logException(exception);
-        CrashLogUtil.takeScreenshot(view);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
+
+    public static void logReadAndWriteException(View view, Exception exception) {
+        CrashLogUtil.readAndWrite(exception);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
+
+    public static void logReadAndWriteException(View view, String folderPath, String fileName, String text) {
+        CrashLogUtil.readAndWrite(text, folderPath, fileName);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
     }
 
     public static Intent getLaunchIntent() {

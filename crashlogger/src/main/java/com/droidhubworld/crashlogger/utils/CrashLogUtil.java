@@ -1,6 +1,5 @@
 package com.droidhubworld.crashlogger.utils;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,13 +10,14 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.droidhubworld.crashlogger.CrashLogReporter;
 import com.droidhubworld.crashlogger.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -50,7 +50,7 @@ public class CrashLogUtil {
 
         String crashReportPath = CrashLogReporter.getCrashReportPath();
         String filename = getCrashLogTime() + Constants.CRASH_SUFFIX + Constants.FILE_EXTENSION;
-        writeToFile(crashReportPath, filename, getStackTrace(throwable));
+        writeToFile(crashReportPath, filename, getStackTrace(null, throwable), true);
 
         showNotification(throwable.getLocalizedMessage(), true);
     }
@@ -62,7 +62,7 @@ public class CrashLogUtil {
             if (TextUtils.isEmpty(screenShortPath)) {
                 screenShortPath = getDefaultScreenShortPath();
             }
-            String mFileName = getCrashLogTime() + Constants.SCREEN_SHORT_SUFFIX + Constants.SCREEN_SHORT_FILE_EXTENSION;
+            String mFileName = getCrashLogTime() + "_" + CrashLogReporter.getCrashReportFileName() + Constants.SCREEN_SHORT_SUFFIX + Constants.SCREEN_SHORT_FILE_EXTENSION;
 
             File crashDir = new File(screenShortPath);
             if (!crashDir.exists() || !crashDir.isDirectory()) {
@@ -98,14 +98,70 @@ public class CrashLogUtil {
 
                 String crashReportPath = CrashLogReporter.getCrashReportPath();
                 final String filename = getCrashLogTime() + Constants.EXCEPTION_SUFFIX + Constants.FILE_EXTENSION;
-                writeToFile(crashReportPath, filename, getStackTrace(exception));
+                writeToFile(crashReportPath, filename, getStackTrace(null, exception), true);
 
                 showNotification(exception.getLocalizedMessage(), false);
             }
         }).start();
     }
 
-    private static void writeToFile(String crashReportPath, String filename, String crashLog) {
+    public static void readAndWrite(Exception exception) {
+
+        new Thread(() -> {
+            String crashReportPath = CrashLogReporter.getCrashReportPath();
+            String filename = CrashLogReporter.getCrashReportFileName() + Constants.EXCEPTION_SUFFIX + Constants.FILE_EXTENSION;
+
+            String dirPath = crashReportPath + File.separator + filename;
+            File file = new File(dirPath);
+            if (!file.exists()) {
+                writeToFile(crashReportPath, filename, getStackTrace(null, exception), true);
+            } else {
+                String crashLog = FileUtils.readFromFile(file);
+                try {
+                    JSONObject data = new JSONObject(crashLog);
+                    JSONArray oldData = data.optJSONArray(Constants.EXCEPTION_SUFFIX);
+                    writeToFile(crashReportPath, filename, getStackTrace(oldData, exception), true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            showNotification(exception.getLocalizedMessage(), false);
+        }).start();
+    }
+
+    public static void readAndWrite(String text, String crashReportPath, String fileName) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String _fileName = fileName + "_" + Constants.DATA_SUFFIX + Constants.FILE_EXTENSION;
+
+                String dirPath = crashReportPath + File.separator + _fileName;
+                File file = new File(dirPath);
+                if (!file.exists()) {
+                    writeToFile(crashReportPath, _fileName, getStackTrace(null, text), false);
+                } else {
+                    String crashLog = FileUtils.readFromFile(file);
+                    try {
+                        JSONObject data = new JSONObject(crashLog);
+                        JSONArray oldData = data.optJSONArray(Constants.DATA_SUFFIX);
+                        writeToFile(crashReportPath, _fileName, getStackTrace(oldData, text), false);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                showNotification(text, false);
+            }
+        }).start();
+    }
+
+    private static void writeToFile(String crashReportPath, String filename, JSONArray crashLog, boolean isException) {
 
         if (TextUtils.isEmpty(crashReportPath)) {
             crashReportPath = getDefaultPath();
@@ -113,14 +169,19 @@ public class CrashLogUtil {
 
         File crashDir = new File(crashReportPath);
         if (!crashDir.exists() || !crashDir.isDirectory()) {
-            crashReportPath = getDefaultPath();
+            if (crashDir.mkdirs()) {
+                crashReportPath = crashDir.getAbsolutePath();
+            } else {
+                crashReportPath = getDefaultPath();
+            }
             Logger.e(TAG, "Path provided doesn't exists : " + crashDir + "\nSaving crash report at : " + getDefaultPath());
         }
 
         BufferedWriter bufferedWriter;
         try {
             JSONObject object = new JSONObject();
-            object.put(Constants.EXCEPTION_SUFFIX, crashLog);
+
+            object.put((isException) ? Constants.EXCEPTION_SUFFIX : Constants.DATA_SUFFIX, crashLog);
 
             String systemInfo = AppUtils.getDeviceDetails(CrashLogReporter.getContext());
             object.put(Constants.DEVISE_INFO, systemInfo);
@@ -179,14 +240,62 @@ public class CrashLogUtil {
         }
     }
 
-    private static String getStackTrace(Throwable e) {
+    private static JSONArray getStackTrace(JSONArray oldData, Throwable e) {
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
+        try {
 
-        e.printStackTrace(printWriter);
-        String crashLog = result.toString();
-        printWriter.close();
-        return crashLog;
+            e.printStackTrace(printWriter);
+
+            JSONArray jsonArray = oldData;
+
+            if (jsonArray == null) {
+                jsonArray = new JSONArray();
+            }
+
+            JSONObject object1 = new JSONObject();
+            object1.put(Constants.EXCEPTION_DATE_SUFFIX, getCrashLogTime());
+
+
+
+            /*if (oldData != null) {
+                jsonArray.put(oldData);
+            }*/
+//        crashLog = result.toString();
+
+            object1.put(Constants.EXCEPTION_SUFFIX, result.toString());
+
+            jsonArray.put(object1);
+
+            printWriter.close();
+            return jsonArray;
+        } catch (Exception _e) {
+            _e.printStackTrace();
+            return oldData;
+        }
+    }
+
+    private static JSONArray getStackTrace(JSONArray oldData, String text) {
+
+        try {
+            JSONArray jsonArray = oldData;
+
+            if (jsonArray == null) {
+                jsonArray = new JSONArray();
+            }
+
+            JSONObject object1 = new JSONObject();
+            object1.put(Constants.DATE_SUFFIX, getCrashLogTime());
+
+            object1.put(Constants.DATA_SUFFIX, text);
+
+            jsonArray.put(object1);
+
+            return jsonArray;
+        } catch (Exception _e) {
+            _e.printStackTrace();
+            return oldData;
+        }
     }
 
     public static String getDefaultPath() {
