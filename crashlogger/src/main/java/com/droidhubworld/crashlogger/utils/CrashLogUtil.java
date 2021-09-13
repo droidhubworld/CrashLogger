@@ -158,7 +158,7 @@ public class CrashLogUtil {
         }).start();
     }
 
-    public static void readAndWrite(String tag, Exception exception) {
+    public static void readAndWrite(String tag, Throwable exception) {
 
         new Thread(() -> {
             String crashReportPath = CrashLogReporter.getCrashReportPath();
