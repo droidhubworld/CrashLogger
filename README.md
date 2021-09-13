@@ -14,7 +14,7 @@ allprojects {
  ###### Step 2. Add the dependency
  ```
 dependencies {
-         implementation 'com.github.droidhubworld:CrashLogger:v0.0.2'
+         implementation 'com.github.droidhubworld:CrashLogger:v0.1.0'
 }
 
 ```
