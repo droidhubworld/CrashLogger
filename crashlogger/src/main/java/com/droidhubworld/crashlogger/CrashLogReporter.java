@@ -29,10 +29,11 @@ public class CrashLogReporter {
         setUpExceptionHandler();
     }
 
-    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName) {
+    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName,boolean isNotificationEnabled) {
         applicationContext = context;
         crashReportPath = crashReportSavePath;
         crashReportFileName = crashReportSaveFileName;
+        this.isNotificationEnabled = isNotificationEnabled;
         setUpExceptionHandler();
     }
 
@@ -63,7 +64,7 @@ public class CrashLogReporter {
 
 
         public CrashLogReporter build() {
-            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName);
+            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName,isNotificationEnabled);
         }
     }
 
