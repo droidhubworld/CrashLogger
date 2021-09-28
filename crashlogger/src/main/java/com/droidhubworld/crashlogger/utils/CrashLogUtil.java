@@ -303,7 +303,7 @@ public class CrashLogUtil {
                 if (crashReportPath == null) {
                     dirPath = CrashLogReporter.getCrashReportPath();
                 } else {
-                    dirPath = crashReportPath + File.separator + _fileName;
+                    dirPath = crashReportPath;
                 }
 
                 writeToFile(dirPath, _fileName, getStackTrace(null, tag, jsonObject), false);
