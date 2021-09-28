@@ -237,6 +237,7 @@ public class CrashLogUtil {
             showNotification(exception.getLocalizedMessage(), false);
         }).start();
     }
+
     public static void readAndWrite(Throwable exception, JSONObject jsonObject, String tag, String crashReportPath, String fileName) {
 
         new Thread(() -> {
@@ -292,6 +293,26 @@ public class CrashLogUtil {
         }).start();
     }
 
+    public static void writeFile(JSONObject jsonObject, String tag, String crashReportPath, String fileName) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String _fileName = fileName + "_" + Constants.DATA_SUFFIX + Constants.FILE_EXTENSION;
+                String dirPath;
+                if (crashReportPath == null) {
+                    dirPath = CrashLogReporter.getCrashReportPath();
+                } else {
+                    dirPath = crashReportPath + File.separator + _fileName;
+                }
+
+                writeToFile(dirPath, _fileName, getStackTrace(null, tag, jsonObject), false);
+
+                showNotification(jsonObject.toString(), false);
+            }
+        }).start();
+    }
+
     public static void readAndWrite(JSONObject jsonObject, String tag, String crashReportPath, String fileName) {
 
         new Thread(new Runnable() {
@@ -327,7 +348,11 @@ public class CrashLogUtil {
             crashReportPath = getDefaultPath();
         }
 
+        /*boolean saads = FileUtils.isDirExit(CrashLogReporter.getContext(), crashReportPath);
+        String s = FileUtils.createFolder(CrashLogReporter.getContext(), crashReportPath);
+        Logger.e("PATH", s);*/
         File crashDir = new File(crashReportPath);
+
         if (!crashDir.exists() || !crashDir.isDirectory()) {
             if (crashDir.mkdirs()) {
                 crashReportPath = crashDir.getAbsolutePath();
@@ -437,6 +462,7 @@ public class CrashLogUtil {
             return oldData;
         }
     }
+
     private static JSONArray getStackTrace(JSONArray oldData, String tag, JSONObject jsonObject, Throwable e) {
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);

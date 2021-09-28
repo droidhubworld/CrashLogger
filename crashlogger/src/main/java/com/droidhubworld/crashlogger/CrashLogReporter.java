@@ -8,6 +8,7 @@ import com.droidhubworld.crashlogger.activity.CrashLoggerActivity;
 import com.droidhubworld.crashlogger.utils.CrashLogExceptionHandler;
 import com.droidhubworld.crashlogger.utils.CrashLogNotInitializedException;
 import com.droidhubworld.crashlogger.utils.CrashLogUtil;
+import com.droidhubworld.crashlogger.utils.FileUtils;
 
 import org.json.JSONObject;
 
@@ -26,15 +27,21 @@ public class CrashLogReporter {
 
     public static void initialize(Context context) {
         applicationContext = context;
+        //checkDirectory(context, crashReportSavePath);
+
         setUpExceptionHandler();
     }
 
-    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName,boolean isNotificationEnabled) {
+    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName, boolean isNotificationEnabled) {
         applicationContext = context;
-        crashReportPath = crashReportSavePath;
         crashReportFileName = crashReportSaveFileName;
         this.isNotificationEnabled = isNotificationEnabled;
+        checkDirectory(context, crashReportSavePath);
         setUpExceptionHandler();
+    }
+
+    private static void checkDirectory(Context context, String directory) {
+        crashReportPath = FileUtils.createFolder(context, directory);
     }
 
     public static class Builder {
@@ -64,7 +71,7 @@ public class CrashLogReporter {
 
 
         public CrashLogReporter build() {
-            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName,isNotificationEnabled);
+            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName, isNotificationEnabled);
         }
     }
 
@@ -114,8 +121,15 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+
     public static void logReadAndWriteException(View view, Throwable exception) {
         CrashLogUtil.readAndWrite(exception);
+        if (view != null)
+            CrashLogUtil.takeScreenshot(view);
+    }
+
+    public static void writeFiles(View view, String TAG, String folderPath, String fileName, JSONObject jsonObject) {
+        CrashLogUtil.writeFile(jsonObject, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
@@ -125,6 +139,7 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+
     public static void logReadAndWriteException(View view, String TAG, Throwable exception) {
         CrashLogUtil.readAndWrite(TAG, exception);
         if (view != null)
@@ -136,23 +151,27 @@ public class CrashLogReporter {
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+
     public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, JSONObject jsonObject) {
         CrashLogUtil.readAndWrite(jsonObject, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
+
     public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, Throwable t) {
         CrashLogUtil.readAndWrite(t, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
-    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName,String text, Throwable t) {
-        CrashLogUtil.readAndWrite(t,text, TAG, folderPath, fileName);
+
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, String text, Throwable t) {
+        CrashLogUtil.readAndWrite(t, text, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }
-    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName,JSONObject jsonObject, Throwable t) {
-        CrashLogUtil.readAndWrite(t,jsonObject, TAG, folderPath, fileName);
+
+    public static void logReadAndWriteException(View view, String TAG, String folderPath, String fileName, JSONObject jsonObject, Throwable t) {
+        CrashLogUtil.readAndWrite(t, jsonObject, TAG, folderPath, fileName);
         if (view != null)
             CrashLogUtil.takeScreenshot(view);
     }

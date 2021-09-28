@@ -1,5 +1,8 @@
 package com.droidhubworld.crashlogger.utils;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import java.io.BufferedReader;
@@ -12,6 +15,43 @@ public class FileUtils {
 
     private FileUtils() {
         //this class is not publicly instantiable
+    }
+
+    public static String createFolder(Context context, String directoryName) {
+        File externalStorageDir;
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            File path = Environment.getExternalStorageDirectory();
+            String path = context.getExternalFilesDir(null).getAbsolutePath();
+
+            externalStorageDir = new File(path, directoryName);
+            if (!externalStorageDir.exists()) {
+                externalStorageDir.mkdirs();
+            }
+        } else {
+            externalStorageDir = new File(Environment.getExternalStorageDirectory(), directoryName);
+            if (!externalStorageDir.exists()) {
+                externalStorageDir.mkdirs();
+            }
+        }*/
+        externalStorageDir = new File(Environment.getExternalStorageDirectory(), directoryName);
+        if (!externalStorageDir.exists()) {
+            externalStorageDir.mkdirs();
+        }
+        return externalStorageDir.getAbsolutePath();
+    }
+
+    public static boolean isDirExit(Context context, String directoryName){
+        File externalStorageDir;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            String path = context.getExternalFilesDir(null).getAbsolutePath();
+
+            externalStorageDir = new File(path, directoryName);
+
+        } else {
+            externalStorageDir = new File(Environment.getExternalStorageDirectory(), directoryName);
+        }
+        return externalStorageDir.exists();
     }
 
     public static boolean delete(String absPath) {

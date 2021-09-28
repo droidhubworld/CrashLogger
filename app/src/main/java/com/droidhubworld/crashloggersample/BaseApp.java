@@ -17,7 +17,7 @@ public class BaseApp extends Application {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
             new CrashLogReporter.Builder(this)
-                    .crashReportPath(path)
+                    .crashReportPath("CrashLogger")
                     .crashReportFileName("crash_log")
                     .isNotificationEnabled(false)
                     .build();
