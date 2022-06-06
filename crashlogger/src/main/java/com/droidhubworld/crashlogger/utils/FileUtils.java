@@ -17,6 +17,9 @@ public class FileUtils {
         //this class is not publicly instantiable
     }
 
+    public static boolean createDirectory(String dir) {
+        return dir != null && (new File(dir).mkdirs());
+    }
     public static String createFolder(Context context, String directoryName) {
         File externalStorageDir;
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

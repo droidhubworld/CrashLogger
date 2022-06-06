@@ -20,6 +20,7 @@ public class BaseApp extends Application {
                     .crashReportPath("CrashLogger")
                     .crashReportFileName("crash_log")
                     .isNotificationEnabled(false)
+                    .addAppVersionOnFileName(false)
                     .build();
         }
     }

@@ -9,8 +9,12 @@ import com.droidhubworld.crashlogger.utils.CrashLogExceptionHandler;
 import com.droidhubworld.crashlogger.utils.CrashLogNotInitializedException;
 import com.droidhubworld.crashlogger.utils.CrashLogUtil;
 import com.droidhubworld.crashlogger.utils.FileUtils;
+import com.droidhubworld.crashlogger.utils.Logger;
 
 import org.json.JSONObject;
+
+import java.io.File;
+import static com.droidhubworld.crashlogger.utils.FileUtils.createDirectory;
 
 public class CrashLogReporter {
     private static Context applicationContext;
@@ -19,6 +23,7 @@ public class CrashLogReporter {
     private static String crashReportFileName;
 
     private static boolean isNotificationEnabled = true;
+    private static boolean addAppVersionOnFileName = false;
 
 
     private CrashLogReporter() {
@@ -32,16 +37,27 @@ public class CrashLogReporter {
         setUpExceptionHandler();
     }
 
-    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName, boolean isNotificationEnabled) {
+    public static void setCrashReportPath(String crashReportPath) {
+        CrashLogReporter.crashReportPath = crashReportPath;
+    }
+
+    public CrashLogReporter(Context context, String crashReportSavePath, String crashReportSaveFileName, boolean isNotificationEnabled, boolean addAppVersionOnFileName) {
         applicationContext = context;
         crashReportFileName = crashReportSaveFileName;
         this.isNotificationEnabled = isNotificationEnabled;
+        this.addAppVersionOnFileName = addAppVersionOnFileName;
+
         checkDirectory(context, crashReportSavePath);
         setUpExceptionHandler();
     }
 
+
+
     private static void checkDirectory(Context context, String directory) {
-        crashReportPath = FileUtils.createFolder(context, directory);
+//        crashReportPath = FileUtils.createFolder(context, directory);
+        if (FileUtils.createDirectory(directory)) {
+            crashReportPath = directory;
+        }
     }
 
     public static class Builder {
@@ -49,6 +65,7 @@ public class CrashLogReporter {
         String crashReportPath;
         String crashReportFileName;
         boolean isNotificationEnabled;
+        boolean addAppVersionOnFileName;
 
         public Builder(Context mContext) {
             applicationContext = mContext;
@@ -69,9 +86,14 @@ public class CrashLogReporter {
             return this;
         }
 
+        public Builder addAppVersionOnFileName(Boolean addAppVersionOnFileName) {
+            this.addAppVersionOnFileName = addAppVersionOnFileName;
+            return this;
+        }
+
 
         public CrashLogReporter build() {
-            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName, isNotificationEnabled);
+            return new CrashLogReporter(applicationContext, crashReportPath, crashReportFileName, isNotificationEnabled,addAppVersionOnFileName);
         }
     }
 
@@ -103,6 +125,9 @@ public class CrashLogReporter {
 
     public static boolean isNotificationEnabled() {
         return isNotificationEnabled;
+    }
+    public static boolean isAddAppVersionOnFileName() {
+        return addAppVersionOnFileName;
     }
 
     //LOG Exception APIs

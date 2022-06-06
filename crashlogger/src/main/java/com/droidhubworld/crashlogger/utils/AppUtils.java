@@ -55,33 +55,33 @@ public class AppUtils {
     public static String getDeviceDetails(Context context) {
 
         return "Device Information\n"
-                + "\nDEVICE.ID : " + getDeviceId(context)
-                + "\nUSER.ID : " + getUserIdentity(context)
-                + "\nAPP.VERSION : " + getAppVersion(context)
-                + "\nLAUNCHER.APP : " + getCurrentLauncherApp(context)
-                + "\nTIMEZONE : " + timeZone()
-                + "\nVERSION.RELEASE : " + Build.VERSION.RELEASE
-                + "\nVERSION.INCREMENTAL : " + Build.VERSION.INCREMENTAL
-                + "\nVERSION.SDK.NUMBER : " + Build.VERSION.SDK_INT
-                + "\nBOARD : " + Build.BOARD
-                + "\nBOOTLOADER : " + Build.BOOTLOADER
-                + "\nBRAND : " + Build.BRAND
-                + "\nCPU_ABI : " + Build.CPU_ABI
-                + "\nCPU_ABI2 : " + Build.CPU_ABI2
-                + "\nDISPLAY : " + Build.DISPLAY
-                + "\nFINGERPRINT : " + Build.FINGERPRINT
-                + "\nHARDWARE : " + Build.HARDWARE
-                + "\nHOST : " + Build.HOST
-                + "\nID : " + Build.ID
-                + "\nMANUFACTURER : " + Build.MANUFACTURER
-                + "\nMODEL : " + Build.MODEL
-                + "\nPRODUCT : " + Build.PRODUCT
-                + "\nSERIAL : " + Build.SERIAL
-                + "\nTAGS : " + Build.TAGS
-                + "\nTIME : " + Build.TIME
-                + "\nTYPE : " + Build.TYPE
-                + "\nUNKNOWN : " + Build.UNKNOWN
-                + "\nUSER : " + Build.USER;
+                + "\n DEVICE.ID : " + getDeviceId(context)
+                + "\n USER.ID : " + getUserIdentity(context)
+                + "\n APP.VERSION : " + getAppVersion(context)
+                + "\n LAUNCHER.APP : " + getCurrentLauncherApp(context)
+                + "\n TIMEZONE : " + timeZone()
+                + "\n VERSION.RELEASE : " + Build.VERSION.RELEASE
+                + "\n VERSION.INCREMENTAL : " + Build.VERSION.INCREMENTAL
+                + "\n VERSION.SDK.NUMBER : " + Build.VERSION.SDK_INT
+                + "\n BOARD : " + Build.BOARD
+                + "\n BOOTLOADER : " + Build.BOOTLOADER
+                + "\n BRAND : " + Build.BRAND
+                + "\n CPU_ABI : " + Build.CPU_ABI
+                + "\n CPU_ABI2 : " + Build.CPU_ABI2
+                + "\n DISPLAY : " + Build.DISPLAY
+                + "\n FINGERPRINT : " + Build.FINGERPRINT
+                + "\n HARDWARE : " + Build.HARDWARE
+                + "\n HOST : " + Build.HOST
+                + "\n ID : " + Build.ID
+                + "\n MANUFACTURER : " + Build.MANUFACTURER
+                + "\n MODEL : " + Build.MODEL
+                + "\n PRODUCT : " + Build.PRODUCT
+                + "\n SERIAL : " + Build.SERIAL
+                + "\n TAGS : " + Build.TAGS
+                + "\n TIME : " + Build.TIME
+                + "\n TYPE : " + Build.TYPE
+                + "\n UNKNOWN : " + Build.UNKNOWN
+                + "\n USER : " + Build.USER;
     }
 
     private static String timeZone() {
@@ -109,11 +109,11 @@ public class AppUtils {
         return androidId;
     }
 
-    private static int getAppVersion(Context context) {
+    public static String getAppVersion(Context context) {
         try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
+            return packageInfo.versionCode + "(" + packageInfo.versionName + ")";
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException("Could not get package name: " + e);
         }
