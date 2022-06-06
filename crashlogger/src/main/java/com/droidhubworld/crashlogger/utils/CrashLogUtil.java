@@ -371,7 +371,8 @@ public class CrashLogUtil {
             String systemInfo = AppUtils.getDeviceDetails(CrashLogReporter.getContext());
             object.put(Constants.DEVISE_INFO, systemInfo);
             if (CrashLogReporter.isAddAppVersionOnFileName()) {
-                filename = filename+"(V-" + AppUtils.getAppVersion(CrashLogReporter.getContext())+")" ;
+                String[] fName=filename.split(".");
+                filename = fName[0]+"(V-" + AppUtils.getAppVersion(CrashLogReporter.getContext())+").txt" ;
             }
             bufferedWriter = new BufferedWriter(new FileWriter(
                     crashReportPath + File.separator + filename));
