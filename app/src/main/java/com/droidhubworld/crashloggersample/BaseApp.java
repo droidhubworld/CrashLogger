@@ -14,7 +14,7 @@ public class BaseApp extends Application {
         super.onCreate();
         if (BuildConfig.DEBUG) {
             //initialise reporter with external path
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
+//            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "CrashLogger";
 
             new CrashLogReporter.Builder(this)
                     .crashReportPath("CrashLogger")
