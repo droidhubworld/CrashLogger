@@ -16,7 +16,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 public class AppUtils {
-    private static String getCurrentLauncherApp(Context context) {
+    public  static String getCurrentLauncherApp(Context context) {
         String str = "";
         PackageManager localPackageManager = context.getPackageManager();
         Intent intent = new Intent("android.intent.action.MAIN");
@@ -33,7 +33,7 @@ public class AppUtils {
         return str;
     }
 
-    private static String getUserIdentity(Context context) {
+    public static String getUserIdentity(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS) ==
                 PackageManager.PERMISSION_GRANTED) {
             AccountManager manager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
@@ -84,12 +84,12 @@ public class AppUtils {
                 + "\n USER : " + Build.USER;
     }
 
-    private static String timeZone() {
+    public static String timeZone() {
         TimeZone tz = TimeZone.getDefault();
         return tz.getID();
     }
 
-    private static String getDeviceId(Context context) {
+    public static String getDeviceId(Context context) {
         String androidDeviceId = getAndroidDeviceId(context);
         if (androidDeviceId == null)
             androidDeviceId = UUID.randomUUID().toString();
@@ -97,7 +97,7 @@ public class AppUtils {
 
     }
 
-    private static String getAndroidDeviceId(Context context) {
+    public static String getAndroidDeviceId(Context context) {
         final String INVALID_ANDROID_ID = "9774d56d682e549c";
         final String androidId = android.provider.Settings.Secure.getString(
                 context.getContentResolver(),
