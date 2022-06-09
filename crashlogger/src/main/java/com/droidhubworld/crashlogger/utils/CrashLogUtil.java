@@ -47,7 +47,6 @@ public class CrashLogUtil {
     }
 
     public static void saveCrashReport(final Throwable throwable) {
-
         String crashReportPath = CrashLogReporter.getCrashReportPath();
         String filename = getCrashLogTime() + Constants.CRASH_SUFFIX + Constants.FILE_EXTENSION;
         writeToFile(crashReportPath, filename, getStackTrace(null, null, throwable), true);
