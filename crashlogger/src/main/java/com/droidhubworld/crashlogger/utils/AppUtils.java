@@ -9,14 +9,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 import java.util.TimeZone;
 import java.util.UUID;
 
 public class AppUtils {
-    public  static String getCurrentLauncherApp(Context context) {
+    public static String getCurrentLauncherApp(Context context) {
         String str = "";
         PackageManager localPackageManager = context.getPackageManager();
         Intent intent = new Intent("android.intent.action.MAIN");
@@ -81,7 +85,27 @@ public class AppUtils {
                 + "\n TIME : " + Build.TIME
                 + "\n TYPE : " + Build.TYPE
                 + "\n UNKNOWN : " + Build.UNKNOWN
-                + "\n USER : " + Build.USER;
+                + "\n USER : " + Build.USER
+                + "\n IP Address : " + getLocalIpAddress();
+    }
+
+    public static String getLocalIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+                 en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Log.e("IP Address", ex.toString());
+            return ex.getMessage();
+        }
+        return null;
     }
 
     public static String timeZone() {
