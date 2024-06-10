@@ -9,13 +9,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
+import org.json.JSONObject;
+
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -56,9 +54,45 @@ public class AppUtils {
         return "";
     }
 
-    public static String getDeviceDetails(Context context) {
+    public static JSONObject getDeviceDetails(Context context) {
+        JSONObject deviceInfo = new JSONObject();
+        try {
+            deviceInfo.put("DEVICE.ID", getDeviceId(context));
+            deviceInfo.put("USER.ID", getUserIdentity(context));
+            deviceInfo.put("APP.VERSION", getAppVersion(context));
+            deviceInfo.put("LAUNCHER.APP", getCurrentLauncherApp(context));
+            deviceInfo.put("TIMEZONE", timeZone());
+            deviceInfo.put("VERSION.RELEASE", Build.VERSION.RELEASE);
+            deviceInfo.put("VERSION.INCREMENTAL", Build.VERSION.INCREMENTAL);
+            deviceInfo.put("VERSION.SDK.NUMBER", Build.VERSION.SDK_INT);
+            deviceInfo.put("BOARD", Build.BOARD);
+            deviceInfo.put("BOOTLOADER", Build.BOOTLOADER);
+            deviceInfo.put("BRAND", Build.BRAND);
+            deviceInfo.put("CPU_ABI", Build.CPU_ABI);
+            deviceInfo.put("CPU_ABI2", Build.CPU_ABI2);
+            deviceInfo.put("DISPLAY", Build.DISPLAY);
+            deviceInfo.put("FINGERPRINT", Build.FINGERPRINT);
+            deviceInfo.put("HARDWARE", Build.HARDWARE);
+            deviceInfo.put("HOST", Build.HOST);
+            deviceInfo.put("ID", Build.ID);
+            deviceInfo.put("MANUFACTURER", Build.MANUFACTURER);
+            deviceInfo.put("MODEL", Build.MODEL);
+            deviceInfo.put("PRODUCT", Build.PRODUCT);
+            deviceInfo.put("SERIAL", Build.SERIAL);
+            deviceInfo.put("TIME", Build.TIME);
+            deviceInfo.put("TAGS", Build.TAGS);
+            deviceInfo.put("TYPE", Build.TYPE);
+            deviceInfo.put("UNKNOWN", Build.UNKNOWN);
+            deviceInfo.put("USER", Build.USER);
+            deviceInfo.put("IP Address", NetworkUtils.getIPAddress(true));
 
-        return "Device Information\n"
+            return deviceInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        /*String str= "Device Information\n"
                 + "\n DEVICE.ID : " + getDeviceId(context)
                 + "\n USER.ID : " + getUserIdentity(context)
                 + "\n APP.VERSION : " + getAppVersion(context)
@@ -86,26 +120,8 @@ public class AppUtils {
                 + "\n TYPE : " + Build.TYPE
                 + "\n UNKNOWN : " + Build.UNKNOWN
                 + "\n USER : " + Build.USER
-                + "\n IP Address : " + getLocalIpAddress();
-    }
+                + "\n IP Address : " + NetworkUtils.getIPAddress(true);*/
 
-    public static String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-                 en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        return inetAddress.getHostAddress();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            Log.e("IP Address", ex.toString());
-            return ex.getMessage();
-        }
-        return null;
     }
 
     public static String timeZone() {

@@ -367,7 +367,7 @@ public class CrashLogUtil {
 
             object.put((isException) ? Constants.EXCEPTION_SUFFIX : Constants.DATA_SUFFIX, crashLog);
 
-            String systemInfo = AppUtils.getDeviceDetails(CrashLogReporter.getContext());
+            JSONObject systemInfo = AppUtils.getDeviceDetails(CrashLogReporter.getContext());
             object.put(Constants.DEVISE_INFO, systemInfo);
             if (CrashLogReporter.isAddAppVersionOnFileName()) {
                 if (filename.contains("crash")) {
