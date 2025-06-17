@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.droidhubworld.crashlogger">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission
+    <!--<uses-permission
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />-->
 
 
     <application
@@ -22,7 +21,7 @@
         <activity
             android:name="com.droidhubworld.crashlogger.activity.LogMessageActivity"
             android:parentActivityName="com.droidhubworld.crashlogger.activity.CrashLoggerActivity"
-            android:theme="@style/CrashLogger.Theme"></activity>
+            android:theme="@style/CrashLogger.Theme"/>
         <activity
             android:name="com.droidhubworld.crashlogger.activity.CrashLoggerActivity"
             android:launchMode="singleTask"
