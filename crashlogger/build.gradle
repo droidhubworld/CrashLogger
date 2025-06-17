@@ -38,3 +38,29 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     implementation 'com.google.code.gson:gson:2.11.0'
 }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+//                from components.release
+                groupId = 'com.github.droidhubworld'
+                artifactId = 'crashlogger'
+                version = 'v2.0.19'
+            }
+        }
+    }
+}
+/*
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.droidhubworld'
+            artifactId = 'crashlogger'
+            version = 'v2.0.18'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}*/
